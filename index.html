@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Inclusivo - Inclusão Digital</title>
+    <style>
+        /* --- Princípios de UX/IHC: Cores de alto contraste e fontes escaláveis --- */
+        :root {
+            --bg-principal: #f4f6f9;
+            --bg-card: #ffffff;
+            --texto-principal: #1a1a1a;
+            --texto-secundario: #4a4a4a;
+            --cor-primaria: #0056b3; /* Contraste adequado para links/botões */
+            --cor-foco: #dc3545;
+            --tamanho-base: 18px; /* Fonte maior que o padrão para facilitar leitura */
+        }
+
+        /* Classe de Alto Contraste via JavaScript */
+        .alto-contraste {
+            --bg-principal: #000000;
+            --bg-card: #121212;
+            --texto-principal: #ffffff;
+            --texto-secundario: #e0e0e0;
+            --cor-primaria: #ffff00;
+            --cor-foco: #00ff00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-principal);
+            font-size: var(--tamanho-base);
+            line-height: 1.6;
+            padding-bottom: 60px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- Acessibilidade: Atalho para leitores de tela --- */
+        .pular-conteudo {
+            position: absolute;
+            top: -100px;
+            left: 0;
+            background: var(--cor-primaria);
+            color: white;
+            padding: 10px;
+            z-index: 100;
+        }
+        .pular-conteudo:focus {
+            top: 0;
+        }
+
+        /* --- Barra de Acessibilidade Fixa --- */
+        .barra-acessibilidade {
+            background-color: var(--bg-card);
+            border-bottom: 2px solid var(--texto-secundario);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .botoes-acessibilidade {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Botões grandes e fáceis de clicar (Mínimo 44x44px - Regra de UX Móvel/Acessível) */
+        .btn-acessivel {
+            background-color: var(--cor-primaria);
+            color: var(--bg-card);
+            border: 2px solid transparent;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            min-height: 48px;
+        }
+
+        .btn-acessivel:focus, a:focus {
+            outline: 4px solid var(--cor-foco);
+        }
+
+        /* --- Layout Principal Semântico --- */
+        header {
+            padding: 40px 20px;
+            text-align: center;
+            background-color: var(--bg-card);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .secao-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 600px) {
+            .secao-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* --- Cartões de Conteúdo Dinâmico --- */
+        .card {
+            background-color: var(--bg-card);
+            border: 2px solid var(--texto-secundario);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--cor-primaria);
+        }
+
+        .card p {
+            margin-bottom: 20px;
+            color: var(--texto-secundario);
+        }
+
+        /* --- Seção de Direitos Digitais / Feedback Interativo --- */
+        .secao-interativa {
+            margin-top: 40px;
+            background-color: var(--bg-card);
+            border: 2px solid var(--texto-secundario);
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        #mensagem-sucesso {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 8px;
+            font-weight: bold;
+            display: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+            color: var(--texto-secundario);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Acessibilidade: Atalho de teclado para pular direto ao conteúdo principal -->
+    <a href="#conteudo-principal" class="pular-conteudo">Pular para o conteúdo principal</a>
+
+    <!-- Ferramentas de Inclusão Digital (Manipulação do DOM) -->
+    <section class="barra-acessibilidade" aria-label="Ferramentas de Acessibilidade">
+        <span><strong>Ferramentas de Ajuda:</strong></span>
+        <div class="botoes-acessibilidade">
+            <button class="btn-acessivel" id="btn-aumentar" aria-label="Aumentar o tamanho do texto">Texto Maior (+)</button>
+            <button class="btn-acessivel" id="btn-diminuir" aria-label="Diminuir o tamanho do texto">Texto Menor (-)</button>
+            <button class="btn-acessivel" id="btn-contraste" aria-label="Alternar modo de alto contraste">Mudar Cores (Contraste)</button>
+        </div>
+    </section>
+
+    <header>
+        <h1>Espaço Digital Seguro</h1>
+        <p>Um site simples, com letras grandes e fácil de navegar feito especialmente para você.</p>
+    </header>
+
+    <main id="conteudo-principal">
+        <section class="secao-cards" aria-label="Serviços Disponíveis">
+            
+            <!-- Card 1: Foco em idosos e saúde/comunicação -->
+            <article class="card">
+                <h2>Comunicação Fácil</h2>
+                <p>Aprenda a fazer chamadas de vídeo com seus filhos, netos e amigos queridos sem complicações e com segurança.</p>
+                <button class="btn-acessivel" onclick="alert('Funcionalidade de simulação: Abrindo o Guia de Vídeo!')">Acessar Guia de Vídeo</button>
+            </article>
+
+            <!-- Card 2: Foco em Direitos Digitais e Segurança -->
+            <article class="card">
+                <h2>Seus Direitos Digitais</h2>
+                <p>A internet é sua por direito! Saiba como a Lei Geral de Proteção de Dados (LGPD) protege suas fotos, conversas e dados particulares.</p>
+                <button class="btn-acessivel" onclick="alert('Funcionalidade de simulação: Abrindo a Cartilha de Direitos!')">Ler Meus Direitos</button>
+            </article>
+
+        </section>
+
+        <!-- Seção Interativa com manipulação de DOM para feedback em tempo real -->
+        <section class="secao-interativa" aria-labelledby="titulo-ajuda">
+            <h2 id="titulo-ajuda">Precisa de Ajuda ou Inclusão?</h2>
+            <p>Clique no botão abaixo para avisar nossa equipe de voluntários que você gostaria de receber uma ligação telefônica para aprender a usar a internet.</p>
+            
+            <button class="btn-acessivel" id="btn-solicitar">Quero receber uma ligação de ajuda</button>
+            <div id="mensagem-sucesso" role="alert"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Desenvolvido com foco em Inclusão Social e Direitos Digitais &copy; 2026</p>
+    </footer>
+
+    <!-- --- JavaScript: Interações Dinâmicas e Controle de Acessibilidade --- -->
+    <script>
+        // 1. Controle do Tamanho da Fonte (Acessibilidade)
+        const rootElement = document.documentElement;
+        let tamanhoFonteAtual = 18; // Tamanho base em pixels
+
+        document.getElementById('btn-aumentar').addEventListener('click', () => {
+            if (tamanhoFonteAtual < 28) { // Limite máximo seguro para não quebrar o layout
+                tamanhoFonteAtual += 2;
+                rootElement.style.setProperty('--tamanho-base', tamanhoFonteAtual + 'px');
+            }
+        });
+
+        document.getElementById('btn-diminuir').addEventListener('click', () => {
+            if (tamanhoFonteAtual > 14) { // Limite mínimo seguro
+                tamanhoFonteAtual -= 2;
+                rootElement.style.setProperty('--tamanho-base', tamanhoFonteAtual + 'px');
+            }
+        });
+
+        // 2. Controle de Alto Contraste (IHC / Visão Baixa)
+        const botaoContraste = document.getElementById('btn-contraste');
+        botaoContraste.addEventListener('click', () => {
+            document.body.classList.toggle('alto-contraste');
+        });
+
+        // 3. Manipulação do DOM: Feedback interativo e acessível (Inclusão Social)
+        const botaoSolicitar = document.getElementById('btn-solicitar');
+        const mensagemSucesso = document.getElementById('mensagem-sucesso');
+
+        botaoSolicitar.addEventListener('click', () => {
+            // Altera o estado do DOM dinamicamente
+            mensagemSucesso.style.display = 'block';
+            mensagemSucesso.textContent = 'Sucesso! Um voluntário vai te ligar em até 24 horas no número cadastrado. Fique atento ao telefone!';
+            
+            // Move o foco do teclado para a mensagem de sucesso (Essencial para leitores de tela)
+            mensagemSucesso.setAttribute('tabindex', '-1');
+            mensagemSucesso.focus();
+            
+            // Desabilita o botão para evitar múltiplos cliques acidentais por tremores
+            botaoSolicitar.disabled = true;
+            botaoSolicitar.style.opacity = '0.5';
+            botaoSolicitar.style.cursor = 'not-allowed';
+        });
+    </script>
+</body>
+</html>
